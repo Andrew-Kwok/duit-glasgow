@@ -117,7 +117,7 @@ export default function PaymentList() {
                 </dialog>
             </div>
 
-            <div className="flex justify-center max-w-[100vw] overflow-x-hidden">
+            <div className="flex justify-center max-w-[100vw] overflow-x-auto">
                 <table className="table table-zebra max-w-screen-2xl">
                     <thead>
                     <tr>
