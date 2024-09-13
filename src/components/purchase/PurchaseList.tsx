@@ -92,15 +92,15 @@ export default function PurchaseList() {
         <div className="m-8">
             <h1 className="text-3xl font-bold"> Recent Purchases </h1>
 
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(24rem,1fr))] gap-4 my-4">
-                <div className="card bg-base-100 w-96 shadow-xl">
-                    <Link href="/create" className="card btn btn-primary w-96 shadow-xl h-full justify-center items-center">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(24rem,1fr))] gap-4 my-4 max-w-[100vw]">
+                <div className="card bg-base-100 w-96 max-w-[100vw] shadow-xl">
+                    <Link href="/create" className="card btn btn-primary w-full shadow-xl h-full justify-center items-center">
                         <h1 className="text-5xl tooltip" data-tip="add more purchases"> + </h1>
                     </Link>
                 </div>
 
                 {purchaseList.map((purchase, index) => (
-                    <div className="card bg-base-100 w-96 shadow-xl" key={index}>
+                    <div className="card bg-base-100 w-96 max-w-[100w] shadow-xl" key={index}>
                         <div className="card-body">
                             <div className="flex text-right">
                                 <h2 className="card-title"> {purchase.name} </h2>

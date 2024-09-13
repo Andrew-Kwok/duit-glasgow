@@ -9,7 +9,7 @@ export default function PersonList() {
 
     return (
         <div className="hero bg-base-100 min-h-fit">
-            <div className="hero-content flex w-full flex-col lg:flex-row items-start">
+            <div className="hero-content flex w-full flex-col lg:flex-row items-center lg:items-start">
                 <div className="overflow-x-auto">
                     <table className="table table-zebra">
                         <thead>

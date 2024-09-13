@@ -184,112 +184,113 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
                 </label>
             </div>
 
+            <div className="max-w-[100vw] overflow-x-auto">
+                <table className="table table-zebra">
+                    <thead>
+                    <tr>
+                        <th>Delete</th>
+                        <th>No</th>
+                        <th>Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Tax (%)</th>
+                        <th>Total Price</th>
+                        <th>Communal</th>
+                        {persons.map((person) => (
+                            <th key={person.id}>{person.name}</th>
+                        ))}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        purchase.purchase_details.map((purchaseDetail, index) => (
+                            <tr key={index}>
+                                <td>
+                                    <button type="button" className="btn btn-ghost" onClick={() => handleDeletePurchaseDetail(index)}>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-5 w-5"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"
+                                            />
+                                        </svg>
+                                    </button>
+                                </td>
+                                <td className="font-bold">{index + 1}</td>
+                                <td>
+                                    <input
+                                        type="text"
+                                        placeholder="Item name"
+                                        className="input w-full max-w-xs"
+                                        value={purchaseDetail.item_name}
+                                        onChange={(e) => handlePurchaseDetailInputChange(index, 'item_name', e.target.value)}
+                                    />
+                                </td>
+                                <td>
+                                    <input
+                                        type="number"
+                                        placeholder="Quantity"
+                                        className="input w-full max-w-28"
+                                        value={purchaseDetail.quantity}
+                                        onChange={(e) => handlePurchaseDetailInputChange(index, 'quantity', e.target.value)}
+                                    />
+                                </td>
+                                <td>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        placeholder="Price"
+                                        className="input w-full max-w-28"
+                                        value={purchaseDetail.price}
+                                        onChange={(e) => handlePurchaseDetailInputChange(index, 'price', e.target.value)}
+                                    />
+                                </td>
+                                <td>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        placeholder="Tax rate"
+                                        className="input w-full max-w-28"
+                                        value={purchaseDetail.tax_rate}
+                                        onChange={(e) => handlePurchaseDetailInputChange(index, 'tax_rate', e.target.value)}
+                                    />
+                                </td>
+                                <td>{purchaseDetail.total_price.toFixed(2)}</td>
 
-            <table className="table table-zebra overflow-x-auto">
-                <thead>
-                <tr>
-                    <th>Delete</th>
-                    <th>No</th>
-                    <th>Name</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Tax (%)</th>
-                    <th>Total Price</th>
-                    <th>Communal</th>
-                    {persons.map((person) => (
-                        <th key={person.id}>{person.name}</th>
-                    ))}
-                </tr>
-                </thead>
-                <tbody>
-                {
-                    purchase.purchase_details.map((purchaseDetail, index) => (
-                        <tr key={index}>
-                            <td>
-                                <button type="button" className="btn btn-ghost" onClick={() => handleDeletePurchaseDetail(index)}>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-5 w-5"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor">
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"
-                                        />
-                                    </svg>
-                                </button>
-                            </td>
-                            <td className="font-bold">{index + 1}</td>
-                            <td>
-                                <input
-                                    type="text"
-                                    placeholder="Item name"
-                                    className="input w-full max-w-xs"
-                                    value={purchaseDetail.item_name}
-                                    onChange={(e) => handlePurchaseDetailInputChange(index, 'item_name', e.target.value)}
-                                />
-                            </td>
-                            <td>
-                                <input
-                                    type="number"
-                                    placeholder="Quantity"
-                                    className="input w-full max-w-28"
-                                    value={purchaseDetail.quantity}
-                                    onChange={(e) => handlePurchaseDetailInputChange(index, 'quantity', e.target.value)}
-                                />
-                            </td>
-                            <td>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    placeholder="Price"
-                                    className="input w-full max-w-28"
-                                    value={purchaseDetail.price}
-                                    onChange={(e) => handlePurchaseDetailInputChange(index, 'price', e.target.value)}
-                                />
-                            </td>
-                            <td>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    placeholder="Tax rate"
-                                    className="input w-full max-w-28"
-                                    value={purchaseDetail.tax_rate}
-                                    onChange={(e) => handlePurchaseDetailInputChange(index, 'tax_rate', e.target.value)}
-                                />
-                            </td>
-                            <td>{purchaseDetail.total_price.toFixed(2)}</td>
-
-                            {
-                                purchaseDetail.shares_boolean.map((share, share_index) => (
-                                    <td key={index * 10000 + share_index} className="text-center">
-                                        {
-                                            share_index === 0 ? (
-                                                <CustomCheckbox
-                                                    checked={share}
-                                                    onChange={(checked) => handlePurchaseShareInputChange(index, share_index, checked)}
-                                                />
-                                            ) : (
-                                                <input
-                                                    type="checkbox"
-                                                    checked={share}
-                                                    onChange={(e) => handlePurchaseShareInputChange(index, share_index, e.target.checked)}
-                                                    className="checkbox checkbox-primary"
-                                                    disabled={share_index !== 0 && purchaseDetail.shares_boolean[0]}
-                                                />
-                                            )
-                                        }
-                                    </td>
-                                ))
-                            }
-                        </tr>
-                    ))
-                }
-                </tbody>
-            </table>
+                                {
+                                    purchaseDetail.shares_boolean.map((share, share_index) => (
+                                        <td key={index * 10000 + share_index} className="text-center">
+                                            {
+                                                share_index === 0 ? (
+                                                    <CustomCheckbox
+                                                        checked={share}
+                                                        onChange={(checked) => handlePurchaseShareInputChange(index, share_index, checked)}
+                                                    />
+                                                ) : (
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={share}
+                                                        onChange={(e) => handlePurchaseShareInputChange(index, share_index, e.target.checked)}
+                                                        className="checkbox checkbox-primary"
+                                                        disabled={share_index !== 0 && purchaseDetail.shares_boolean[0]}
+                                                    />
+                                                )
+                                            }
+                                        </td>
+                                    ))
+                                }
+                            </tr>
+                        ))
+                    }
+                    </tbody>
+                </table>
+            </div>
 
             <div className="fixed bottom-0 left-0 w-full bg-base-300 min-h-fit p-4 flex justify-center">
                 <button type="button" className="btn btn-primary mx-2" onClick={handleAddPurchaseDetail}>Add Item</button>

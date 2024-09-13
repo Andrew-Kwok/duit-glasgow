@@ -88,10 +88,10 @@ export default function PaymentList() {
 
     return (
         <div className="m-8 w-full">
-            <div className="flex">
+            <div className="flex flex-col">
                 <h1 className="text-3xl font-bold"> Recent Payments </h1>
                 <button
-                    className="btn btn-primary mx-4"
+                    className="btn btn-primary my-4 max-w-[90vw] w-96"
                     onClick={() => {
                         const modal = document.getElementById("modal_payment_create");
                         if (modal) {
@@ -105,7 +105,7 @@ export default function PaymentList() {
                 </button>
 
                 <dialog id="modal_payment_create" className="modal">
-                    <div className="modal-box max-w-screen-md">
+                    <div className="modal-box w-screen-md max-w-[90vw]">
                         <h1 className="text-xl font-bold"> Add New Payment </h1>
                         <div className="flex justify-center">
                             <PaymentUpsertForm initialPaymentUpsert={constructNewPaymentCreate()} />
@@ -117,8 +117,8 @@ export default function PaymentList() {
                 </dialog>
             </div>
 
-            <div className="flex justify-center">
-                <table className="table table-zebra overflow-x-auto max-w-screen-2xl">
+            <div className="flex justify-center max-w-[100vw] overflow-x-hidden">
+                <table className="table table-zebra max-w-screen-2xl">
                     <thead>
                     <tr>
                         <th>Delete</th>
