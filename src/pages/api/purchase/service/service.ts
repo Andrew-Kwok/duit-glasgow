@@ -33,7 +33,7 @@ async function fetchPurchaseDetailsById(purchaseId: string): Promise<PurchaseDet
         if (!map.has(share.purchase_detail_id)) {
             map.set(share.purchase_detail_id, []);
         }
-        map.get(share.purchase_detail_id).push(share);
+        map.get(share.purchase_detail_id)!.push(share);
         return map;
     }, new Map<string, PurchaseDetailShare[]>);
 
@@ -78,19 +78,24 @@ async function upsertPurchaseWithDetails(purchase: PurchaseUpsert): Promise<void
     // remove contribution from old purchase
     if (oldPurchase) {
         for (const purchaseDetail of oldPurchase.purchase_details) {
-            newPersonBalance.set(oldPurchase.paid_by, newPersonBalance.get(oldPurchase.paid_by) - purchaseDetail.total_price);
-            for (const share of purchaseDetail.shares) {
+            const paidByBalance = newPersonBalance.get(oldPurchase.paid_by) ?? 0;
+            newPersonBalance.set(oldPurchase.paid_by, paidByBalance - purchaseDetail.total_price);
+
+            for (const share of purchaseDetail.shares || []) {
                 const shareAmount = purchaseDetail.total_price * share.share_rate;
-                newPersonBalance.set(share.person_id, newPersonBalance.get(share.person_id) + shareAmount);
+                const personBalance = newPersonBalance.get(share.person_id) ?? 0;
+                newPersonBalance.set(share.person_id, personBalance + shareAmount);
             }
         }
     }
 
     for (const purchaseDetail of purchase.purchase_details) {
-        newPersonBalance.set(purchase.paid_by, newPersonBalance.get(purchase.paid_by) + purchaseDetail.total_price);
-        for (const share of purchaseDetail.shares) {
+        const paidByBalance = newPersonBalance.get(purchase.paid_by) ?? 0;
+        newPersonBalance.set(purchase.paid_by, paidByBalance + purchaseDetail.total_price);
+        for (const share of purchaseDetail.shares || []) {
             const shareAmount = purchaseDetail.total_price * share.share_rate;
-            newPersonBalance.set(share.person_id, newPersonBalance.get(share.person_id) - shareAmount);
+            const personBalance = newPersonBalance.get(share.person_id) ?? 0;
+            newPersonBalance.set(share.person_id, personBalance - shareAmount);
         }
     }
 
@@ -111,10 +116,12 @@ async function deletePurchaseById(purchaseId: string): Promise<void> {
     }, new Map<string, number>());
 
     for (const purchaseDetail of purchase.purchase_details) {
-        newPersonBalance.set(purchase.paid_by, newPersonBalance.get(purchase.paid_by) - purchaseDetail.total_price);
+        const paidByBalance = newPersonBalance.get(purchase.paid_by) ?? 0;
+        newPersonBalance.set(purchase.paid_by, paidByBalance - purchaseDetail.total_price);
         for (const share of purchaseDetail.shares) {
             const shareAmount = purchaseDetail.total_price * share.share_rate;
-            newPersonBalance.set(share.person_id, newPersonBalance.get(share.person_id) + shareAmount);
+            const personBalance = newPersonBalance.get(share.person_id) ?? 0;
+            newPersonBalance.set(share.person_id, personBalance + shareAmount);
         }
     }
 

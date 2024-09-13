@@ -20,7 +20,7 @@ export default function PurchaseDetail(purchaseDetailProps: PurchaseDetailProps)
 
                 setPurchase(purchase);
             } catch (error) {
-                setError(error.message);
+                setError(error instanceof Error ? error.message : "Unknown error");
             } finally {
                 setLoading(false);
             }

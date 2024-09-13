@@ -47,7 +47,11 @@ export default function PaymentUpsertForm(paymentUpsertFormProps: PaymentUpsertF
         try {
             validatePaymentUpsert(payment);
         } catch (error) {
-            alert(error.message);
+            if (error instanceof Error) {
+                alert(error.message);
+            } else {
+                alert('Unknown error');
+            }
             return;
         }
 
@@ -78,7 +82,11 @@ export default function PaymentUpsertForm(paymentUpsertFormProps: PaymentUpsertF
             alert("Payment submitted successfully");
             router.reload();
         } catch (error) {
-            alert(error.message);
+            if (error instanceof Error) {
+                alert(error.message);
+            } else {
+                alert('Unknown error');
+            }
         }
     }
 

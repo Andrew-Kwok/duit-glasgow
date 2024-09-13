@@ -54,10 +54,8 @@ async function getPaymentById(paymentId: string): Promise<Payment> {
 async function upsertPayment(payment: PaymentUpsert): Promise<void> {
     console.log("UPSERT PAYMENT", payment)
 
-    const paymentPayload = { ...payment };
-    if (!paymentPayload.id) {
-        delete paymentPayload.id; // Remove `id` if it's null or undefined
-    }
+    const { id, ...rest } = payment;
+    const paymentPayload = id ? payment : rest;
 
     const { error } = await createSupabaseClient()
         .from(TABLE_NAMES.PAYMENT)

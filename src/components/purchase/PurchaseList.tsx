@@ -45,8 +45,13 @@ export default function PurchaseList() {
             alert(`Purchase ${name} deleted successfully`);
             router.reload();
         } catch (error) {
-            console.error('Error deleting purchase:', error);
-            alert(`Failed to delete purchase: ${error.message}`);
+            if (error instanceof Error) {
+                console.error('Error deleting purchase:', error);
+                alert(`Failed to delete purchase: ${error.message}`);
+            } else {
+                console.error('Unexpected error:', error);
+                alert('Failed to refresh balances: Unknown error');
+            }
         }
     }
 
@@ -71,7 +76,7 @@ export default function PurchaseList() {
                 setPurchaseList(purchases);
                 setTotalPages(totalPages);
             } catch (error) {
-                setError(error.message);
+                setError(error instanceof Error ? error.message : "Unknown error");
             } finally {
                 setLoading(false);
             }
@@ -157,7 +162,17 @@ export default function PurchaseList() {
                                     </svg>
                                 </button>
 
-                                <button className="btn btn-primary" onClick={()=>document.getElementById(`"modal_${index}"`).showModal()}>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => {
+                                        const modal = document.getElementById(`"modal_${index}"`);
+                                        if (modal) {
+                                            (modal as HTMLDialogElement).showModal();
+                                        } else {
+                                            console.error('Modal element not found');
+                                        }
+                                    }}
+                                >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         className="h-5 w-5"

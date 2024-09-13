@@ -33,7 +33,13 @@ export default function HardRefreshBalances() {
             router.reload();
         } catch (error) {
             console.error('Error refreshing balances:', error);
-            alert(`Failed to refresh balances: ${error.message}`);
+            if (error instanceof Error) {
+                console.error('Error refreshing balances:', error);
+                alert(`Failed to refresh balances: ${error.message}`);
+            } else {
+                console.error('Unexpected error:', error);
+                alert('Failed to refresh balances: Unknown error');
+            }
         }
     }
 

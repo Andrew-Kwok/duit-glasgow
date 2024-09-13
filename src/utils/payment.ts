@@ -17,7 +17,7 @@ export function constructPaymentCreateFromPayment(payment: PaymentUpsert): Payme
         from_person_id: payment.from_person_id,
         to_person_id: payment.to_person_id,
         amount: payment.amount,
-        date: new Date(payment.date as string),
+        date: payment.date ? new Date(payment.date as unknown as string) : null,
         notes: payment.notes
     };
 }

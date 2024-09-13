@@ -68,6 +68,7 @@ export function populatePurchaseDetailShares(purchaseCreate: PurchaseUpsert, per
         for (let i = 0; i < persons.length; i++) {
             if (purchaseDetail.shares_boolean[0] || purchaseDetail.shares_boolean[i+1]) {
                 purchaseDetailShares.push({
+                    purchase_detail_id: purchaseDetail.id,
                     person_id: persons[i].id,
                     share_rate: 1 / shareCount
                 });
@@ -129,7 +130,7 @@ export function constructPurchaseCreateFromPurchase(purchase: Purchase, persons:
     return {
         id: purchase.id,
         name: purchase.name,
-        date: new Date(purchase.date as string),
+        date: purchase.date ? new Date(purchase.date as unknown as string) : null,
         total_amount: purchase.total_amount,
         paid_by: purchase.paid_by,
         store: purchase.store,

@@ -47,11 +47,16 @@ export default function PaymentList() {
                 body: JSON.stringify({code: confirmationCode}),
             })
 
-            alert(`Purchase ${paymentNo + 1} deleted successfully`);
+            alert(`Payment ${paymentNo} deleted successfully`);
             router.reload();
         } catch (error) {
-            console.error('Error deleting purchase:', error);
-            alert(`Failed to delete purchase: ${error.message}`);
+            if (error instanceof Error) {
+                console.error('Error deleting payment:', error);
+                alert(`Failed to delete payment: ${error.message}`);
+            } else {
+                console.error('Unexpected error:', error);
+                alert('Failed to refresh balances: Unknown error');
+            }
         }
     }
 
@@ -65,7 +70,11 @@ export default function PaymentList() {
                 setPaymentList(payments);
                 setTotalPages(totalPages);
             } catch (error) {
-                setError(error.message);
+                if (error instanceof Error) {
+                    setError(error.message);
+                } else {
+                    setError('Unknown error');
+                }
             } finally {
                 setLoading(false);
             }
@@ -81,8 +90,18 @@ export default function PaymentList() {
         <div className="m-8 w-full">
             <div className="flex">
                 <h1 className="text-3xl font-bold"> Recent Payments </h1>
-                <button className="btn btn-primary mx-4" onClick={()=>document.getElementById("modal_payment_create").showModal()}>
-                    Add purchases
+                <button
+                    className="btn btn-primary mx-4"
+                    onClick={() => {
+                        const modal = document.getElementById("modal_payment_create");
+                        if (modal) {
+                            (modal as HTMLDialogElement).showModal();
+                        } else {
+                            console.error('Modal element not found');
+                        }
+                    }}
+                >
+                    Add payments
                 </button>
 
                 <dialog id="modal_payment_create" className="modal">
@@ -133,7 +152,18 @@ export default function PaymentList() {
                                 </button>
                             </td>
                             <td>
-                                <button type="button" className="btn btn-ghost" onClick={()=>document.getElementById(`modal_payment_update_${index}`).showModal()}>
+                                <button
+                                    type="button"
+                                    className="btn btn-ghost"
+                                    onClick={() => {
+                                        const modal = document.getElementById(`modal_payment_update_${index}`);
+                                        if (modal) {
+                                            (modal as HTMLDialogElement).showModal();
+                                        } else {
+                                            console.error('Modal element not found');
+                                        }
+                                    }}
+                                >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         className="h-5 w-5"
@@ -165,7 +195,7 @@ export default function PaymentList() {
                             <td>{personMap.get(payment.from_person_id)?.name}</td>
                             <td>{personMap.get(payment.to_person_id)?.name}</td>
                             <td>{payment.amount.toFixed(2)}</td>
-                            <td>{payment.date}</td>
+                            <td>{payment.date.toString()}</td>
                             <td>{payment.notes}</td>
                         </tr>
                         ))}

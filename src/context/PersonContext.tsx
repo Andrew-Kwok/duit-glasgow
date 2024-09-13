@@ -21,7 +21,7 @@ export const PersonProvider = ({ children }: { children: ReactNode }) => {
             const response = await fetch('/api/person/get');
             setPersons(await response.json());
         } catch (error) {
-            setError(error.message);
+            setError(error instanceof Error ? error.message : "Unknown error");
         } finally {
             setLoading(false);
         }

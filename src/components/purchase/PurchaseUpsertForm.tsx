@@ -108,7 +108,7 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
         try {
             validatePurchaseCreate(purchase);
         } catch (error) {
-            alert(error.message);
+            alert(error instanceof Error ?error.message : 'Unknown error');
             return;
         }
 

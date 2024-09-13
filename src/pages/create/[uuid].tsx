@@ -15,11 +15,11 @@ export default function Update() {
 
     const getPurchase = async () => {
         try {
-            const purchaseId = router.query.uuid.toString();
+            const purchaseId = router?.query?.uuid?.toString();
             const purchase = await fetch(`/api/purchase/getById?id=${purchaseId}`).then(response => response.json());
             setPurchase(purchase);
         } catch (error) {
-            setError(error.message);
+            setError(error instanceof Error ? error.message : "Unknown message");
         } finally {
             setLoading(false);
         }

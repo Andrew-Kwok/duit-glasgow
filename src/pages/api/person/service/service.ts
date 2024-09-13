@@ -25,11 +25,13 @@ async function updateBalances(newPersonBalances: Person[]): Promise<void> {
     await PersonSql.updateBalances(newPersonBalances);
 }
 
-async function updateBalancesWithMap(newBalance: Map<String, Number>): Promise<void> {
+async function updateBalancesWithMap(newBalance: Map<string, number>): Promise<void> {
     const persons = await getPersons();
     const personMap = new Map(persons.map(person => [person.id, person]));
-    for (const [id, balance] of newBalance.entries()) {
-        let person = personMap.get(id);
+
+    for (const entry of Array.from(newBalance.entries())) {
+        const [id, balance] = entry;
+        const person = personMap.get(id); // Convert `id` to a string if necessary
         if (!person) {
             throw new Error(`Person with ID ${id} not found`);
         }

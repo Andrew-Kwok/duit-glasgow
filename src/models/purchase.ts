@@ -28,8 +28,6 @@ export interface PurchaseDetailShare {
     purchase_detail_id: string;  // UUID
     person_id: string;  // UUID
     share_rate: number;
-    created_at: Date;
-    updated_at: Date;
 }
 
 export interface PurchaseUpsert {
