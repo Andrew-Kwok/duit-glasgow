@@ -104,7 +104,7 @@ export default function PurchaseList() {
                         <div className="card-body">
                             <div className="flex text-right">
                                 <h2 className="card-title"> {purchase.name} </h2>
-                                <p className="italic"> {new Date(purchase.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' })} </p>
+                                <p className="italic"> {new Date(purchase.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit', timeZone: 'UTC' })} </p>
                             </div>
                             <div className="flex justify-between">
                                 <h3> {purchase.store} </h3>
