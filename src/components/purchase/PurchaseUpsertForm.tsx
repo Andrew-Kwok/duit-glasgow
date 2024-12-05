@@ -1,3 +1,5 @@
+"use client";
+
 import React, {useContext, useState} from "react";
 import {PersonContext} from "@component/context/PersonContext";
 import CustomCheckbox from "@component/components/CustomCheckbox";
@@ -7,7 +9,7 @@ import {
     populatePurchaseDetailShares,
     validatePurchaseCreate
 } from "@component/utils/purchase";
-import {useRouter} from 'next/router';
+import {useRouter} from 'next/navigation';
 
 
 interface UpsertFormProps {
@@ -121,7 +123,8 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
 
         try {
             populatePurchaseDetailShares(purchase, persons);
-            const response = await fetch(`/api/purchase/upsert`, {
+            console.log('Upserting purchase:', purchase, confirmationCode)
+            const response = await fetch(`/api/purchase`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -147,8 +150,7 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
     }
 
     return (
-        <form className="relative min-h-screen">
-
+        <form className="flex flex-col min-h-screen">
             <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 my-4">
                 <label className="form-control w-full max-w-xs">
                     <div className="label">
@@ -168,14 +170,14 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
                     <div className="label">
                         <span className="label-text">Date</span>
                     </div>
-                    <input type="date" name="date" className="input input-bordered w-full max-w-xs" value={purchase.date?.toISOString().split('T')[0]} onChange={handleDateInputChange} />
+                    <input type="date" name="date" className="input input-bordered w-full max-w-xs" value={purchase.date ? purchase.date.toISOString().split('T')[0] : ''} onChange={handleDateInputChange} />
                 </label>
 
                 <label className="form-control w-full max-w-xs">
                     <div className="label">
                         <span className="label-text">Paid by</span>
                     </div>
-                    <select name="paid_by" defaultValue="" value={purchase.paid_by} className="select select-bordered" onChange={handleStringInputChange}>
+                    <select name="paid_by" value={purchase.paid_by} className="select select-bordered" onChange={handleStringInputChange}>
                         <option value="" disabled> Who paid? </option>
                         {persons.map((person) => (
                             <option key={person.id} value={person.id}>{person.name}</option>
@@ -184,7 +186,7 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
                 </label>
             </div>
 
-            <div className="max-w-[100vw] overflow-x-auto">
+            <div className="max-w-[100vw] overflow-x-auto flex-grow" style={{ paddingBottom: '6rem' }}>
                 <table className="table table-zebra">
                     <thead>
                     <tr>
@@ -237,7 +239,7 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
                                         type="number"
                                         placeholder="Quantity"
                                         className="input w-full max-w-28"
-                                        value={purchaseDetail.quantity}
+                                        value={purchaseDetail.quantity ? purchaseDetail.quantity : ''}
                                         onChange={(e) => handlePurchaseDetailInputChange(index, 'quantity', e.target.value)}
                                     />
                                 </td>
@@ -247,7 +249,7 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
                                         step="0.01"
                                         placeholder="Price"
                                         className="input w-full max-w-28"
-                                        value={purchaseDetail.price}
+                                        value={purchaseDetail.price ? purchaseDetail.price : ''}
                                         onChange={(e) => handlePurchaseDetailInputChange(index, 'price', e.target.value)}
                                     />
                                 </td>
@@ -257,7 +259,7 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
                                         step="0.01"
                                         placeholder="Tax rate"
                                         className="input w-full max-w-28"
-                                        value={purchaseDetail.tax_rate}
+                                        defaultValue={0}
                                         onChange={(e) => handlePurchaseDetailInputChange(index, 'tax_rate', e.target.value)}
                                     />
                                 </td>

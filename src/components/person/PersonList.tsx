@@ -1,3 +1,5 @@
+"use client";
+
 // src/components/PersonList.tsx
 import React, {useContext} from 'react';
 import {PersonContext} from "@component/context/PersonContext";

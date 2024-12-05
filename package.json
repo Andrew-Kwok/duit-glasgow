@@ -1,5 +1,5 @@
 {
-  "name": "money-management",
+  "name": "duit-glasgow",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,21 +9,28 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth0/nextjs-auth0": "^3.5.0",
     "@supabase/supabase-js": "^2.44.2",
     "@types/node": "20.14.9",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
-    "autoprefixer": "10.4.19",
     "express": "^4.21.0",
-    "next": "^14.2.4",
-    "postcss": "8.4.39",
+    "next": "^15.0.3",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "tailwindcss": "3.4.4",
     "theme-change": "^2.5.0",
     "typescript": "5.5.2"
   },
   "devDependencies": {
-    "daisyui": "^4.12.10"
-  }
+    "autoprefixer": "^10.4.20",
+    "daisyui": "^4.12.14",
+    "postcss": "^8.4.49",
+    "supabase": "^1.226.3",
+    "tailwindcss": "^3.4.16"
+  },
+  "description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
+  "main": "next.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

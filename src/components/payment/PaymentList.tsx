@@ -1,10 +1,12 @@
+"use client";
+
 import React, {useContext, useEffect, useState} from "react";
 import {PersonContext} from "@component/context/PersonContext";
 import {Payment} from "@component/models/payment";
 import PaymentUpsertForm from "@component/components/payment/PaymentUpsertForm";
 import {constructNewPaymentCreate, constructPaymentCreateFromPayment} from "@component/utils/payment";
-import {useRouter} from "next/router";
-import {DEFAULT_PAYMENT_PAGE_SIZE} from "@component/pages/api/constants";
+import {useRouter} from "next/navigation";
+import {DEFAULT_PAYMENT_PAGE_SIZE} from "@component/app/api/constants";
 import {GetPersonMapFromPersons} from "@component/utils/common";
 
 export default function PaymentList() {
@@ -39,7 +41,7 @@ export default function PaymentList() {
         }
 
         try {
-            await fetch(`/api/payment/delete?id=${id}`, {
+            const response = await fetch(`/api/payment?id=${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -47,8 +49,14 @@ export default function PaymentList() {
                 body: JSON.stringify({code: confirmationCode}),
             })
 
+            if (!response.ok) {
+                // Extract error message from response
+                const errorMessage = await response.text();
+                throw new Error(errorMessage);
+            }
+
             alert(`Payment ${paymentNo} deleted successfully`);
-            router.reload();
+            window.location.reload();
         } catch (error) {
             if (error instanceof Error) {
                 console.error('Error deleting payment:', error);
@@ -65,7 +73,7 @@ export default function PaymentList() {
     useEffect(() => {
         const loadPayments = async () => {
             try {
-                const response = await fetch(`/api/payment/getByPagination?page=${currentPage}`);
+                const response = await fetch(`/api/payment?page=${currentPage}`);
                 const { payments, totalPages } = await response.json();
                 setPaymentList(payments);
                 setTotalPages(totalPages);

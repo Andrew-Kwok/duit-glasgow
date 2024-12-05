@@ -1,11 +1,18 @@
+"use client";
+
+import dynamic from "next/dynamic";
 import {Purchase} from "@component/models/purchase";
-import React, {useContext, useEffect, useState} from "react";
-import PurchaseDetail from "@component/components/purchase/PurchaseDetail";
+import React, { useContext, useEffect, useState, lazy, Suspense } from "react";
+// import PurchaseDetail from "@component/components/purchase/PurchaseDetail";
 import Link from "next/link";
 import {PersonContext} from "@component/context/PersonContext";
-import {useRouter} from "next/router";
+import {useRouter} from "next/navigation";
 import {GetPersonMapFromPersons} from "@component/utils/common";
 
+const PurchaseDetail = dynamic(
+    () => import('@component/components/purchase/PurchaseDetail'), {
+    loading: () => <p>Loading...</p>,
+});
 export default function PurchaseList() {
     const router = useRouter();
 
@@ -34,7 +41,7 @@ export default function PurchaseList() {
         }
 
         try {
-            await fetch(`/api/purchase/delete?id=${id}`, {
+            const response = await fetch(`/api/purchase?id=${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -42,8 +49,14 @@ export default function PurchaseList() {
                 body: JSON.stringify({ code: confirmationCode }),
             })
 
+            if (!response.ok) {
+                // Extract error message from response
+                const errorMessage = await response.text();
+                throw new Error(errorMessage);
+            }
+
             alert(`Purchase ${name} deleted successfully`);
-            router.reload();
+            window.location.reload();
         } catch (error) {
             if (error instanceof Error) {
                 console.error('Error deleting purchase:', error);
@@ -71,8 +84,10 @@ export default function PurchaseList() {
     useEffect(() => {
         const loadPurchases = async () => {
             try {
-                const response = await fetch(`/api/purchase/getByPagination?page=${currentPage}`);
+                const response = await fetch(`/api/purchase?page=${currentPage}`);
                 const { purchases, totalPages } = await response.json();
+                console.log(purchases);
+
                 setPurchaseList(purchases);
                 setTotalPages(totalPages);
             } catch (error) {
@@ -89,7 +104,7 @@ export default function PurchaseList() {
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <div className="m-8">
+        <div className="m-8 min-h-screen">
             <h1 className="text-3xl font-bold"> Recent Purchases </h1>
 
             <div className="grid grid-cols-[repeat(auto-fill,minmax(24rem,1fr))] gap-4 my-4 max-w-[100vw]">
@@ -165,7 +180,7 @@ export default function PurchaseList() {
                                 <button
                                     className="btn btn-primary"
                                     onClick={() => {
-                                        const modal = document.getElementById(`"modal_${index}"`);
+                                        const modal = document.getElementById(`modal_${index}`);
                                         if (modal) {
                                             (modal as HTMLDialogElement).showModal();
                                         } else {
@@ -187,7 +202,7 @@ export default function PurchaseList() {
                                     </svg>
                                 </button>
 
-                                <dialog id={`"modal_${index}"`}  className="modal">
+                                <dialog id={`modal_${index}`} className="modal">
                                     <div className="modal-box max-w-screen-lg">
                                         <PurchaseDetail purchaseId={purchase.id} personMap={personMap} />
                                     </div>
@@ -195,6 +210,7 @@ export default function PurchaseList() {
                                         <button>close</button>
                                     </form>
                                 </dialog>
+
                             </div>
                         </div>
                     </div>

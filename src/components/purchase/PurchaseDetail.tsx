@@ -1,3 +1,5 @@
+"use client";
+
 import {Purchase} from "@component/models/purchase";
 import {Person} from "@component/models/person";
 import React, {useEffect, useState} from "react";
@@ -12,10 +14,13 @@ export default function PurchaseDetail(purchaseDetailProps: PurchaseDetailProps)
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
+
     useEffect(() => {
         const loadPurchases = async () => {
             try {
-                const response = await fetch(`/api/purchase/getById?id=${purchaseDetailProps.purchaseId}`);
+                console.log("TES ", purchaseDetailProps.purchaseId);
+
+                const response = await fetch(`/api/purchase?id=${purchaseDetailProps.purchaseId}`);
                 const purchase = await response.json();
 
                 setPurchase(purchase);
@@ -27,7 +32,7 @@ export default function PurchaseDetail(purchaseDetailProps: PurchaseDetailProps)
         };
 
         loadPurchases();
-    }, []);
+    }, [purchaseDetailProps.purchaseId]);
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
