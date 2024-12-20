@@ -1,6 +1,9 @@
+"use client";
+
 import {Purchase} from "@component/models/purchase";
 import {Person} from "@component/models/person";
 import React, {useEffect, useState} from "react";
+import PurchaseSpendingShare from "@component/components/purchase/PurchaseSpendingShare";
 
 interface PurchaseDetailProps {
     purchaseId: string;
@@ -12,10 +15,11 @@ export default function PurchaseDetail(purchaseDetailProps: PurchaseDetailProps)
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
+
     useEffect(() => {
         const loadPurchases = async () => {
             try {
-                const response = await fetch(`/api/purchase/getById?id=${purchaseDetailProps.purchaseId}`);
+                const response = await fetch(`/api/purchase?id=${purchaseDetailProps.purchaseId}`);
                 const purchase = await response.json();
 
                 setPurchase(purchase);
@@ -27,7 +31,7 @@ export default function PurchaseDetail(purchaseDetailProps: PurchaseDetailProps)
         };
 
         loadPurchases();
-    }, []);
+    }, [purchaseDetailProps.purchaseId]);
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
@@ -73,6 +77,16 @@ export default function PurchaseDetail(purchaseDetailProps: PurchaseDetailProps)
             <div className="flex justify-end mt-4">
                 <h2 className="text-lg font-bold">Total: CAD {purchase?.total_amount.toFixed(2)}</h2>
             </div>
+
+
+            <div className="mt-4">
+            {
+                purchase?.purchase_details
+                    ? <PurchaseSpendingShare purchaseDetails={purchase.purchase_details} personArray={Array.from(purchaseDetailProps.personMap.values())} />
+                    : null
+            }
+            </div>
+
         </div>
     );
 }

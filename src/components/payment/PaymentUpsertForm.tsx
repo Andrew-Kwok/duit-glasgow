@@ -1,8 +1,10 @@
+"use client";
+
 import {PaymentUpsert} from "@component/models/payment";
 import {PersonContext} from "@component/context/PersonContext";
 import React, {useContext, useState} from "react";
-import {validatePaymentUpsert} from "@component/utils/payment";
-import {useRouter} from "next/router";
+import {validatePaymentUpsert} from "@component/lib/payment";
+import {useRouter} from "next/navigation";
 
 interface PaymentUpsertFormProps {
     initialPaymentUpsert: PaymentUpsert;
@@ -55,19 +57,18 @@ export default function PaymentUpsertForm(paymentUpsertFormProps: PaymentUpsertF
             return;
         }
 
-        const confirmationCode = prompt('Please enter the confirmation code to upsert payment:');
-        if (!confirmationCode) {
-            alert('Confirmation code is required');
+        const confirmed = window.confirm(`Are you ready to upsert payment?`);
+        if (!confirmed) {
             return;
         }
 
         try {
-            const response = await fetch(`/api/payment/upsert`, {
+            const response = await fetch(`/api/payment`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ code: confirmationCode, payment: payment }),
+                body: JSON.stringify({ payment: payment }),
             });
 
             if (!response.ok) {
@@ -80,7 +81,7 @@ export default function PaymentUpsertForm(paymentUpsertFormProps: PaymentUpsertF
             console.log('Balances refreshed:', result);
 
             alert("Payment submitted successfully");
-            router.reload();
+            window.location.reload();
         } catch (error) {
             if (error instanceof Error) {
                 alert(error.message);
@@ -93,12 +94,11 @@ export default function PaymentUpsertForm(paymentUpsertFormProps: PaymentUpsertF
 
     return (
         <div>
-
             <label className="form-control w-full max-w-sm">
                 <div className="label">
                     <span className="label-text">Paid from</span>
                 </div>
-                <select name="from_person_id" defaultValue="" value={payment.from_person_id ? payment.from_person_id : ""} className="select select-bordered" onChange={handleStringInputChange}>
+                <select name="from_person_id" value={payment.from_person_id ? payment.from_person_id : ""} className="select select-bordered" onChange={handleStringInputChange}>
                     <option value="" disabled> Who paid? </option>
                     {persons.map((person) => (
                         <option key={person.id} value={person.id}>{person.name}</option>
@@ -108,7 +108,7 @@ export default function PaymentUpsertForm(paymentUpsertFormProps: PaymentUpsertF
                 <div className="label">
                     <span className="label-text">Paid to</span>
                 </div>
-                <select name="to_person_id" defaultValue="" value={payment.to_person_id ? payment.to_person_id : ""} className="select select-bordered" onChange={handleStringInputChange}>
+                <select name="to_person_id" value={payment.to_person_id ? payment.to_person_id : ""} className="select select-bordered" onChange={handleStringInputChange}>
                     <option value="" disabled> Who received? </option>
                     {persons.map((person) => (
                         <option key={person.id} value={person.id}>{person.name}</option>
@@ -124,7 +124,7 @@ export default function PaymentUpsertForm(paymentUpsertFormProps: PaymentUpsertF
                     step="0.01"
                     placeholder="Amount"
                     className="input input-bordered w-full max-w-sm"
-                    value={payment.amount}
+                    value={payment.amount ? payment.amount : ''}
                     onChange={handleNumberInputChange}
                 />
 
@@ -134,7 +134,7 @@ export default function PaymentUpsertForm(paymentUpsertFormProps: PaymentUpsertF
                 <input
                     type="date"
                     name="date"
-                    value={payment.date?.toISOString().split('T')[0]}
+                    value={payment.date? payment.date.toISOString().split('T')[0] : ''}
                     className="input input-bordered w-full max-w-sm"
                     onChange={handleDateInputChange}
                 />

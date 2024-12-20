@@ -1,3 +1,5 @@
+"use client";
+
 import React, {createContext, ReactNode, useEffect, useState} from 'react';
 import {Person} from "@component/models/person";
 
@@ -18,7 +20,7 @@ export const PersonProvider = ({ children }: { children: ReactNode }) => {
 
     const refreshPersons = async (): Promise<void> => {
         try {
-            const response = await fetch('/api/person/get');
+            const response = await fetch('/api/person');
             setPersons(await response.json());
         } catch (error) {
             setError(error instanceof Error ? error.message : "Unknown error");

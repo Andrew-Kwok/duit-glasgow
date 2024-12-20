@@ -1,11 +1,18 @@
+"use client";
+
+import dynamic from "next/dynamic";
 import {Purchase} from "@component/models/purchase";
-import React, {useContext, useEffect, useState} from "react";
-import PurchaseDetail from "@component/components/purchase/PurchaseDetail";
+import React, { useContext, useEffect, useState, lazy, Suspense } from "react";
+// import PurchaseDetail from "@component/components/purchase/PurchaseDetail";
 import Link from "next/link";
 import {PersonContext} from "@component/context/PersonContext";
-import {useRouter} from "next/router";
-import {GetPersonMapFromPersons} from "@component/utils/common";
+import {useRouter} from "next/navigation";
+import {GetPersonMapFromPersons} from "@component/lib/common";
 
+const PurchaseDetail = dynamic(
+    () => import('@component/components/purchase/PurchaseDetail'), {
+    loading: () => <p>Loading...</p>,
+});
 export default function PurchaseList() {
     const router = useRouter();
 
@@ -19,31 +26,30 @@ export default function PurchaseList() {
     const [error, setError] = useState<string | null>(null);
 
     const handleUpdateButtonClick = (id: string) => {
-        router.push(`/update/${id}`);
+        router.push(`/purchase/update/${id}`);
     }
 
     const handleDuplicateButtonClick = (id: string) => {
-        router.push(`/create/${id}`);
+        router.push(`/purchase/create/${id}`);
     }
 
     const handleDeleteButtonClick = async (id: string, name: string) => {
-        const confirmationCode = prompt(`Please enter the confirmation code to delete purchase ${name}:`);
-        if (!confirmationCode) {
-            alert('Confirmation code is required');
-            return;
-        }
+        const confirmed = window.confirm(`Are you sure you want to delete purchase ${name}?`);
+        if (!confirmed) return;
 
         try {
-            await fetch(`/api/purchase/delete?id=${id}`, {
+            const response = await fetch(`/api/purchase?id=${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ code: confirmationCode }),
             })
 
+            if (!response.ok) {
+                // Extract error message from response
+                const errorMessage = await response.text();
+                throw new Error(errorMessage);
+            }
+
             alert(`Purchase ${name} deleted successfully`);
-            router.reload();
+            window.location.reload();
         } catch (error) {
             if (error instanceof Error) {
                 console.error('Error deleting purchase:', error);
@@ -71,8 +77,9 @@ export default function PurchaseList() {
     useEffect(() => {
         const loadPurchases = async () => {
             try {
-                const response = await fetch(`/api/purchase/getByPagination?page=${currentPage}`);
+                const response = await fetch(`/api/purchase?page=${currentPage}`);
                 const { purchases, totalPages } = await response.json();
+
                 setPurchaseList(purchases);
                 setTotalPages(totalPages);
             } catch (error) {
@@ -89,12 +96,12 @@ export default function PurchaseList() {
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <div className="m-8">
+        <div className="m-8 min-h-screen">
             <h1 className="text-3xl font-bold"> Recent Purchases </h1>
 
             <div className="grid grid-cols-[repeat(auto-fill,minmax(24rem,1fr))] gap-4 my-4 max-w-[100vw]">
                 <div className="card bg-base-100 w-96 max-w-[100vw] shadow-xl">
-                    <Link href="/create" className="card btn btn-primary w-full shadow-xl h-full justify-center items-center">
+                    <Link href="/purchase/create" className="card btn btn-primary w-full shadow-xl h-full justify-center items-center">
                         <h1 className="text-5xl tooltip" data-tip="add more purchases"> + </h1>
                     </Link>
                 </div>
@@ -165,7 +172,7 @@ export default function PurchaseList() {
                                 <button
                                     className="btn btn-primary"
                                     onClick={() => {
-                                        const modal = document.getElementById(`"modal_${index}"`);
+                                        const modal = document.getElementById(`modal_${index}`);
                                         if (modal) {
                                             (modal as HTMLDialogElement).showModal();
                                         } else {
@@ -187,7 +194,7 @@ export default function PurchaseList() {
                                     </svg>
                                 </button>
 
-                                <dialog id={`"modal_${index}"`}  className="modal">
+                                <dialog id={`modal_${index}`} className="modal">
                                     <div className="modal-box max-w-screen-lg">
                                         <PurchaseDetail purchaseId={purchase.id} personMap={personMap} />
                                     </div>
@@ -195,6 +202,7 @@ export default function PurchaseList() {
                                         <button>close</button>
                                     </form>
                                 </dialog>
+
                             </div>
                         </div>
                     </div>

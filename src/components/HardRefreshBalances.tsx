@@ -1,5 +1,6 @@
+"use client"
 import React from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function HardRefreshBalances() {
     const router = useRouter();
@@ -12,7 +13,7 @@ export default function HardRefreshBalances() {
         }
 
         try {
-            const response = await fetch('/api/lib/hardRefresh', {
+            const response = await fetch('/api/lib/hard-refresh', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -30,7 +31,7 @@ export default function HardRefreshBalances() {
             console.log('Balances refreshed:', result);
 
             alert('Balances refreshed successfully');
-            router.reload();
+            router.refresh();
         } catch (error) {
             console.error('Error refreshing balances:', error);
             if (error instanceof Error) {

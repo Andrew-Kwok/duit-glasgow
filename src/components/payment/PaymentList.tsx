@@ -1,11 +1,13 @@
+"use client";
+
 import React, {useContext, useEffect, useState} from "react";
 import {PersonContext} from "@component/context/PersonContext";
 import {Payment} from "@component/models/payment";
 import PaymentUpsertForm from "@component/components/payment/PaymentUpsertForm";
-import {constructNewPaymentCreate, constructPaymentCreateFromPayment} from "@component/utils/payment";
-import {useRouter} from "next/router";
-import {DEFAULT_PAYMENT_PAGE_SIZE} from "@component/pages/api/constants";
-import {GetPersonMapFromPersons} from "@component/utils/common";
+import {constructNewPaymentCreate, constructPaymentCreateFromPayment} from "@component/lib/payment";
+import {useRouter} from "next/navigation";
+import {DEFAULT_PAYMENT_PAGE_SIZE} from "@component/app/api/constants";
+import {GetPersonMapFromPersons} from "@component/lib/common";
 
 export default function PaymentList() {
     const router = useRouter();
@@ -32,23 +34,24 @@ export default function PaymentList() {
     };
 
     const handleDeleteButtonClick = async (id: string, paymentNo: number) => {
-        const confirmationCode = prompt(`Please enter the confirmation code to delete payment ${paymentNo}:`);
-        if (!confirmationCode) {
-            alert('Confirmation code is required');
+        const confirmed = window.confirm(`Are you sure you want to delete payment #${paymentNo}?`);
+        if (!confirmed) {
             return;
         }
 
         try {
-            await fetch(`/api/payment/delete?id=${id}`, {
+            const response = await fetch(`/api/payment?id=${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({code: confirmationCode}),
             })
 
+            if (!response.ok) {
+                // Extract error message from response
+                const errorMessage = await response.text();
+                throw new Error(errorMessage);
+            }
+
             alert(`Payment ${paymentNo} deleted successfully`);
-            router.reload();
+            window.location.reload();
         } catch (error) {
             if (error instanceof Error) {
                 console.error('Error deleting payment:', error);
@@ -60,12 +63,10 @@ export default function PaymentList() {
         }
     }
 
-
-
     useEffect(() => {
         const loadPayments = async () => {
             try {
-                const response = await fetch(`/api/payment/getByPagination?page=${currentPage}`);
+                const response = await fetch(`/api/payment?page=${currentPage}`);
                 const { payments, totalPages } = await response.json();
                 setPaymentList(payments);
                 setTotalPages(totalPages);
@@ -87,7 +88,7 @@ export default function PaymentList() {
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <div className="m-8 w-full">
+        <div className="m-8 max-w-full">
             <div className="flex flex-col">
                 <h1 className="text-3xl font-bold"> Recent Payments </h1>
                 <button
