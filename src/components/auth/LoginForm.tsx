@@ -36,6 +36,7 @@ export default function SignIn() {
             const response = await signIn('credentials', {
                 email,
                 password,
+                redirectTo: '/dashboard',
             });
 
             // if (response?.error) {
