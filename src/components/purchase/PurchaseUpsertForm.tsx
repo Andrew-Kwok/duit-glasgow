@@ -8,7 +8,7 @@ import {
     constructNewPurchaseDetailCreate,
     populatePurchaseDetailShares,
     validatePurchaseCreate
-} from "@component/utils/purchase";
+} from "@component/lib/purchase";
 import {useRouter} from 'next/navigation';
 
 
@@ -114,22 +114,19 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
             return;
         }
 
-        const confirmationCode = prompt('Please enter the confirmation code to upsert purchase:');
-        if (!confirmationCode) {
-            alert('Confirmation code is required');
+        const confirmed = window.confirm(`Are you ready to upsert purchase?`);
+        if (!confirmed) {
             return;
         }
 
-
         try {
             populatePurchaseDetailShares(purchase, persons);
-            console.log('Upserting purchase:', purchase, confirmationCode)
             const response = await fetch(`/api/purchase`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ code: confirmationCode, purchase: purchase }),
+                body: JSON.stringify({ purchase: purchase }),
             });
             if (!response.ok) {
                 // Extract error message from response
@@ -142,7 +139,7 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
 
             await refreshPersons();
             alert('Purchase created/updated successfully');
-            router.push('/');
+            router.push('/purchase');
         } catch (error) {
             console.error('Error creating purchase:', error);
             alert('Failed to create purchase');
@@ -296,9 +293,7 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
 
             <div className="fixed bottom-0 left-0 w-full bg-base-300 min-h-fit p-4 flex justify-center">
                 <button type="button" className="btn btn-primary mx-2" onClick={handleAddPurchaseDetail}>Add Item</button>
-
                 <h1 className="btn btn-ghost mx-2">Total: CAD {purchase.total_amount.toFixed(2)}</h1>
-
 
                 <button type="submit" className="btn btn-primary mx-2" onClick={handleSubmit}>Submit</button>
             </div>

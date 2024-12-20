@@ -3,7 +3,7 @@
 import {PaymentUpsert} from "@component/models/payment";
 import {PersonContext} from "@component/context/PersonContext";
 import React, {useContext, useState} from "react";
-import {validatePaymentUpsert} from "@component/utils/payment";
+import {validatePaymentUpsert} from "@component/lib/payment";
 import {useRouter} from "next/navigation";
 
 interface PaymentUpsertFormProps {
@@ -57,9 +57,8 @@ export default function PaymentUpsertForm(paymentUpsertFormProps: PaymentUpsertF
             return;
         }
 
-        const confirmationCode = prompt('Please enter the confirmation code to upsert payment:');
-        if (!confirmationCode) {
-            alert('Confirmation code is required');
+        const confirmed = window.confirm(`Are you ready to upsert payment?`);
+        if (!confirmed) {
             return;
         }
 
@@ -69,7 +68,7 @@ export default function PaymentUpsertForm(paymentUpsertFormProps: PaymentUpsertF
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ code: confirmationCode, payment: payment }),
+                body: JSON.stringify({ payment: payment }),
             });
 
             if (!response.ok) {
@@ -95,7 +94,6 @@ export default function PaymentUpsertForm(paymentUpsertFormProps: PaymentUpsertF
 
     return (
         <div>
-
             <label className="form-control w-full max-w-sm">
                 <div className="label">
                     <span className="label-text">Paid from</span>

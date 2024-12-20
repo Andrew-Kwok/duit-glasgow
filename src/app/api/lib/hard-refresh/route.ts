@@ -1,11 +1,12 @@
 import { HARD_REFRESH_BALANCES } from "@component/app/api/constants";
 import { createSupabaseClient } from "@component/app/api/lib/supabase";
 import { NextResponse } from "next/server";
+import {checkAuth} from "@component/app/api/lib/authCheck";
 
-export async function POST(req: Request) {
-    const { code } = await req.json();
-    if (code !== process.env.UPDATE_DATABASE_CODE) {
-        return NextResponse.json({ error: "Invalid or missing code" }, {status: 403});
+export async function POST() {
+    const sessionCheck = await checkAuth();
+    if (sessionCheck instanceof NextResponse) {
+        return sessionCheck;
     }
 
     try {

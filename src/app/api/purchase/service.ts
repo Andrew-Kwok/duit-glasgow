@@ -2,7 +2,7 @@ import {Purchase, PurchaseDetail, PurchaseDetailShare, PurchaseUpsert} from "@co
 import {DEFAULT_PURCHASE_PAGE_SIZE} from "@component/app/api/constants";
 import PersonService from "@component/app/api/person/service";
 import PurchaseSql from "@component/app/api/purchase/sql";
-import {calculateTotalAmount, calculateTotalPrices} from "@component/utils/purchase";
+import {calculateTotalAmount, calculateTotalPrices} from "@component/lib/purchase";
 
 
 export default {
@@ -65,8 +65,6 @@ async function fetchCompletePurchaseById(purchaseId: string): Promise<Purchase> 
 async function upsertPurchaseWithDetails(purchase: PurchaseUpsert): Promise<void> {
     const persons = await PersonService.getPersons();
     let oldPurchase: Purchase | null = null;
-
-    console.log("BAPAK ", purchase);
 
     if (purchase.id) {
         oldPurchase = await fetchCompletePurchaseById(purchase.id);

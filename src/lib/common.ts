@@ -1,4 +1,4 @@
-import {Person} from "@component/models/person";
+import { Person } from "@component/models/person";
 
 export function TranslateBalanceTableToPayFlows(persons: Person[]): String[] {
     const personsCopy = persons.map(person => ({...person}))

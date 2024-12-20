@@ -1,10 +1,18 @@
 import { NextResponse } from "next/server";
+import { checkAuth } from "@component/app/api/lib/authCheck";
 import PaymentService from "@component/app/api/payment/service";
+import {DEFAULT_PAYMENT_PAGE_SIZE} from "@component/app/api/constants";
 
 export async function GET(req: Request) {
+    const sessionCheck = await checkAuth();
+    if (sessionCheck instanceof NextResponse) {
+        return sessionCheck;
+    }
+
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');
-    const pageSize = parseInt(searchParams.get('pageSize') || '10');
+    const pageSizeParam = searchParams.get('pageSize');
+    const pageSize = pageSizeParam ? parseInt(pageSizeParam) : DEFAULT_PAYMENT_PAGE_SIZE;
 
     try {
         const { payments, totalPages } = await PaymentService.fetchPayments(page, pageSize);
@@ -16,10 +24,12 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-    const { payment, code } = await req.json();
-    if (code !== process.env.UPDATE_DATABASE_CODE) {
-        return NextResponse.json({ error: "Invalid or missing code" }, {status: 403});
+    const sessionCheck = await checkAuth();
+    if (sessionCheck instanceof NextResponse) {
+        return sessionCheck;
     }
+
+    const { payment } = await req.json();
 
     try {
         await PaymentService.upsertPayment(payment);
@@ -31,16 +41,16 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+    const sessionCheck = await checkAuth();
+    if (sessionCheck instanceof NextResponse) {
+        return sessionCheck;
+    }
+
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
     if (!id) {
         return NextResponse.json({ error: "Missing ID" }, {status: 400});
-    }
-
-    const { code } = await req.json();
-    if (code !== process.env.UPDATE_DATABASE_CODE) {
-        return NextResponse.json({error: "Invalid or missing code"}, {status: 403});
     }
 
     try {

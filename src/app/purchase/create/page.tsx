@@ -1,7 +1,7 @@
 "use client";
 
 import UpsertForm from "@component/components/purchase/PurchaseUpsertForm";
-import {constructNewPurchaseCreate} from "@component/utils/purchase";
+import {constructNewPurchaseCreate} from "@component/lib/purchase";
 import {useContext} from "react";
 import {PersonContext} from "@component/context/PersonContext";
 

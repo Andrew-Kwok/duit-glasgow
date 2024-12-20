@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
 import PurchaseService from '@component/app/api/purchase/service';
 import { DEFAULT_PURCHASE_PAGE_SIZE } from "@component/app/api/constants";
+import {checkAuth} from "@component/app/api/lib/authCheck";
 
 export async function GET(req: Request) {
+    const sessionCheck = await checkAuth();
+    if (sessionCheck instanceof NextResponse) {
+        return sessionCheck;
+    }
+
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
@@ -19,7 +25,8 @@ export async function GET(req: Request) {
 
     // Otherwise, Get purchases by pagination
     const page = parseInt(searchParams.get('page') || '1');
-    const pageSize = parseInt(searchParams.get('pageSize') || DEFAULT_PURCHASE_PAGE_SIZE.toString());
+    const pageSizeParam = searchParams.get('pageSize');
+    const pageSize = pageSizeParam ? parseInt(pageSizeParam) : DEFAULT_PURCHASE_PAGE_SIZE;
 
     try {
         const { purchases, totalPages } = await PurchaseService.fetchPurchases(page, pageSize);
@@ -31,10 +38,12 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-    const { purchase, code } = await req.json();
-    if (code !== process.env.UPDATE_DATABASE_CODE) {
-        return NextResponse.json({ error: "Invalid or missing code" }, {status: 403});
+    const sessionCheck = await checkAuth();
+    if (sessionCheck instanceof NextResponse) {
+        return sessionCheck;
     }
+
+    const { purchase } = await req.json();
 
     try {
         await PurchaseService.upsertPurchaseWithDetails(purchase);
@@ -46,16 +55,16 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+    const sessionCheck = await checkAuth();
+    if (sessionCheck instanceof NextResponse) {
+        return sessionCheck;
+    }
+
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
     if (!id) {
         return NextResponse.json({ error: "Missing ID" }, {status: 400});
-    }
-
-    const { code } = await req.json();
-    if (code !== process.env.UPDATE_DATABASE_CODE) {
-        return NextResponse.json({error: "Invalid or missing code"}, {status: 403});
     }
 
     try {

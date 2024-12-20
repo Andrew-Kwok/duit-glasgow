@@ -52,8 +52,6 @@ async function getPaymentById(paymentId: string): Promise<Payment> {
 }
 
 async function upsertPayment(payment: PaymentUpsert): Promise<void> {
-    console.log("UPSERT PAYMENT", payment)
-
     const { id, ...rest } = payment;
     const paymentPayload = id ? payment : rest;
 

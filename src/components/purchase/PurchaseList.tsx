@@ -7,7 +7,7 @@ import React, { useContext, useEffect, useState, lazy, Suspense } from "react";
 import Link from "next/link";
 import {PersonContext} from "@component/context/PersonContext";
 import {useRouter} from "next/navigation";
-import {GetPersonMapFromPersons} from "@component/utils/common";
+import {GetPersonMapFromPersons} from "@component/lib/common";
 
 const PurchaseDetail = dynamic(
     () => import('@component/components/purchase/PurchaseDetail'), {
@@ -26,27 +26,20 @@ export default function PurchaseList() {
     const [error, setError] = useState<string | null>(null);
 
     const handleUpdateButtonClick = (id: string) => {
-        router.push(`/update/${id}`);
+        router.push(`/purchase/update/${id}`);
     }
 
     const handleDuplicateButtonClick = (id: string) => {
-        router.push(`/create/${id}`);
+        router.push(`/purchase/create/${id}`);
     }
 
     const handleDeleteButtonClick = async (id: string, name: string) => {
-        const confirmationCode = prompt(`Please enter the confirmation code to delete purchase ${name}:`);
-        if (!confirmationCode) {
-            alert('Confirmation code is required');
-            return;
-        }
+        const confirmed = window.confirm(`Are you sure you want to delete purchase ${name}?`);
+        if (!confirmed) return;
 
         try {
             const response = await fetch(`/api/purchase?id=${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ code: confirmationCode }),
             })
 
             if (!response.ok) {
@@ -86,7 +79,6 @@ export default function PurchaseList() {
             try {
                 const response = await fetch(`/api/purchase?page=${currentPage}`);
                 const { purchases, totalPages } = await response.json();
-                console.log(purchases);
 
                 setPurchaseList(purchases);
                 setTotalPages(totalPages);
@@ -109,7 +101,7 @@ export default function PurchaseList() {
 
             <div className="grid grid-cols-[repeat(auto-fill,minmax(24rem,1fr))] gap-4 my-4 max-w-[100vw]">
                 <div className="card bg-base-100 w-96 max-w-[100vw] shadow-xl">
-                    <Link href="/create" className="card btn btn-primary w-full shadow-xl h-full justify-center items-center">
+                    <Link href="/purchase/create" className="card btn btn-primary w-full shadow-xl h-full justify-center items-center">
                         <h1 className="text-5xl tooltip" data-tip="add more purchases"> + </h1>
                     </Link>
                 </div>

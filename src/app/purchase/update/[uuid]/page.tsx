@@ -3,7 +3,7 @@
 import {Purchase} from "@component/models/purchase";
 import React, {useContext, useEffect, useState, use } from "react";
 import UpsertForm from "@component/components/purchase/PurchaseUpsertForm";
-import {constructPurchaseCreateFromPurchase} from "@component/utils/purchase";
+import {constructPurchaseCreateFromPurchase} from "@component/lib/purchase";
 import {PersonContext} from "@component/context/PersonContext";
 
 export default function Update({ params }: { params: Promise<{ uuid: string }> }) {

@@ -3,14 +3,15 @@
 // src/components/PersonList.tsx
 import React, {useContext} from 'react';
 import {PersonContext} from "@component/context/PersonContext";
-import {TranslateBalanceTableToPayFlows} from "@component/utils/common";
+import {TranslateBalanceTableToPayFlows} from "@component/lib/common";
+import {useSession} from "next-auth/react";
 
 export default function PersonList() {
     const { persons } = useContext(PersonContext);
     const payFlows = TranslateBalanceTableToPayFlows(persons);
 
     return (
-        <div className="hero bg-base-100 min-h-fit">
+        <div className="hero bg-base-100 min-h-screen">
             <div className="hero-content flex w-full flex-col lg:flex-row items-center lg:items-start">
                 <div className="overflow-x-auto">
                     <table className="table table-zebra">

@@ -1,4 +1,10 @@
-import {Purchase, PurchaseDetail, PurchaseDetailUpsert, PurchaseUpsert} from "@component/models/purchase";
+import {
+    Purchase,
+    PurchaseDetail,
+    PurchaseDetailShare,
+    PurchaseDetailUpsert,
+    PurchaseUpsert
+} from "@component/models/purchase";
 import {Person} from "@component/models/person";
 
 export function calculateTotalPrices(purchaseDetails: PurchaseDetail[]): void {
@@ -10,6 +16,46 @@ export function calculateTotalPrices(purchaseDetails: PurchaseDetail[]): void {
 export function calculateTotalAmount(purchaseDetails: PurchaseDetail[]): number {
     return purchaseDetails.reduce((total, purchaseDetail) => total + purchaseDetail.total_price, 0);
 }
+
+export function calculatePriceShares(purchaseDetails: PurchaseDetail[], persons: Person[]): Map<string, number> {
+    const priceShares = new Map<string, number>();
+    for (const purchaseDetail of purchaseDetails) {
+        for (const share of purchaseDetail.shares) {
+            const currentShare = priceShares.get(share.person_id) || 0;
+            priceShares.set(share.person_id, currentShare  + share.share_rate * purchaseDetail.total_price);
+        }
+    }
+
+    return priceShares;
+}
+
+// export function calculatePriceSharesBoolean(purchaseDetails: PurchaseDetailUpsert[], persons: Person[]): Map<string, number> {
+//     const priceShares = new Map<string, number>();
+//     for (const person of persons) {
+//         priceShares.set(person.id, 0);
+//     }
+//
+//     for (const purchaseDetail of purchaseDetails) {
+//         let shareCount = 0;
+//         if (purchaseDetail.shares_boolean[0]) {
+//             shareCount = persons.length;
+//         } else {
+//             shareCount = purchaseDetail.shares_boolean.filter(share => share).length;
+//         }
+//
+//         if (shareCount === 0) {
+//             continue;
+//         }
+//
+//         for (let i = 0; i < persons.length; i++) {
+//             if (purchaseDetail.shares_boolean[0] || purchaseDetail.shares_boolean[i+1]) {
+//                 priceShares.set(persons[i].id, priceShares.get(persons[i].id) + purchaseDetail.total_price / shareCount);
+//             }
+//         }
+//     }
+//
+//     return priceShares;
+// }
 
 export function validatePurchaseCreate(purchase: PurchaseUpsert): void {
     if (!purchase.name || purchase.name.trim() === "") {
