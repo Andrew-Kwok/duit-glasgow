@@ -4,10 +4,10 @@ import PaymentService from "@component/app/api/payment/service";
 import {DEFAULT_PAYMENT_PAGE_SIZE} from "@component/app/api/constants";
 
 export async function GET(req: Request) {
-    const sessionCheck = await checkAuth();
-    if (sessionCheck instanceof NextResponse) {
-        return sessionCheck;
-    }
+    // const sessionCheck = await checkAuth();
+    // if (sessionCheck instanceof NextResponse) {
+    //     return sessionCheck;
+    // }
 
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');

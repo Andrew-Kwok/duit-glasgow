@@ -4,10 +4,10 @@ import { DEFAULT_PURCHASE_PAGE_SIZE } from "@component/app/api/constants";
 import {checkAuth} from "@component/app/api/lib/authCheck";
 
 export async function GET(req: Request) {
-    const sessionCheck = await checkAuth();
-    if (sessionCheck instanceof NextResponse) {
-        return sessionCheck;
-    }
+    // const sessionCheck = await checkAuth();
+    // if (sessionCheck instanceof NextResponse) {
+    //     return sessionCheck;
+    // }
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');

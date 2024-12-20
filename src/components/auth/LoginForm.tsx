@@ -36,16 +36,15 @@ export default function SignIn() {
             const response = await signIn('credentials', {
                 email,
                 password,
-                redirect: false, // Prevent automatic redirect after login
             });
 
-            if (response?.error) {
-                setErrorMessage('Invalid credentials.');
-            } else {
-                // Redirect to the page the user was trying to access or default to home
-                const redirectUrl = searchParams.get('callbackUrl') || '/dashboard';
-                router.push(redirectUrl);
-            }
+            // if (response?.error) {
+            //     setErrorMessage('Invalid credentials.');
+            // } else {
+            //     // Redirect to the page the user was trying to access or default to home
+            //     const redirectUrl = searchParams.get('callbackUrl') || '/dashboard';
+            //     router.push(redirectUrl);
+            // }
         } catch (error) {
             if (error instanceof AuthError) {
                 switch (error.type) {
