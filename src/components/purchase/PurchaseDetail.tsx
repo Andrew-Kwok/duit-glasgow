@@ -61,7 +61,7 @@ export default function PurchaseDetail(purchaseDetailProps: PurchaseDetailProps)
                             <td>{purchaseDetail.price.toFixed(2)}</td>
                             <td>{purchaseDetail.tax_rate.toFixed(2)}%</td>
                             <td>{purchaseDetail.total_price.toFixed(2)}</td>
-                            <td className="grid grid-cols-2">
+                            <td className="grid" style={{ gridTemplateColumns: 'repeat(2, minmax(4rem, 1fr))' }}>
                                 {purchaseDetail.shares.map((share, share_index) => (
                                     <div key={share_index}>
                                         {purchaseDetailProps.personMap.get(share.person_id)?.name}
