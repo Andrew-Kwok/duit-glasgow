@@ -226,7 +226,7 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
                                     <input
                                         type="text"
                                         placeholder="Item name"
-                                        className="input w-full max-w-xs"
+                                        className="input w-full min-w-[16rem] max-w-xs"
                                         value={purchaseDetail.item_name}
                                         onChange={(e) => handlePurchaseDetailInputChange(index, 'item_name', e.target.value)}
                                     />
@@ -235,7 +235,7 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
                                     <input
                                         type="number"
                                         placeholder="Quantity"
-                                        className="input w-full max-w-28"
+                                        className="input w-full min-w-[7rem] max-w-28"
                                         value={purchaseDetail.quantity ? purchaseDetail.quantity : ''}
                                         onChange={(e) => handlePurchaseDetailInputChange(index, 'quantity', e.target.value)}
                                     />
@@ -245,7 +245,7 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
                                         type="number"
                                         step="0.01"
                                         placeholder="Price"
-                                        className="input w-full max-w-28"
+                                        className="input w-full min-w-[7rem] max-w-28"
                                         value={purchaseDetail.price ? purchaseDetail.price : ''}
                                         onChange={(e) => handlePurchaseDetailInputChange(index, 'price', e.target.value)}
                                     />
@@ -255,7 +255,7 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
                                         type="number"
                                         step="0.01"
                                         placeholder="Tax rate"
-                                        className="input w-full max-w-28"
+                                        className="input w-full min-w-[7rem] max-w-28"
                                         defaultValue={0}
                                         onChange={(e) => handlePurchaseDetailInputChange(index, 'tax_rate', e.target.value)}
                                     />
