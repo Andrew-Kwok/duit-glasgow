@@ -118,7 +118,7 @@ export default function PurchaseList() {
                                 <h3 className="font-bold"> payer: {personMap.get(purchase.paid_by)?.name} </h3>
                             </div>
                             <div>
-                                <h1 className="text-2xl font-bold"> CAD {purchase.total_amount.toFixed(2)} </h1>
+                                <h1 className="text-2xl font-bold"> JPY {purchase.total_amount.toFixed(2)} </h1>
                             </div>
 
                             <div className="card-actions justify-end">

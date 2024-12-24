@@ -16,7 +16,7 @@ export default function NavBar() {
     return (
         <div className="navbar bg-base-300">
             <div className="flex-1">
-                <a href="/" className="btn btn-ghost text-xl">Ingfo Koko Glasgow</a>
+                <a href="/" className="btn btn-ghost text-xl">Ingfo Koko Glasgow JP</a>
             </div>
 
             <div className="flex-none gap-1 mr-2">

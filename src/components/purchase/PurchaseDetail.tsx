@@ -75,7 +75,7 @@ export default function PurchaseDetail(purchaseDetailProps: PurchaseDetailProps)
             </table>
 
             <div className="flex justify-end mt-4">
-                <h2 className="text-lg font-bold">Total: CAD {purchase?.total_amount.toFixed(2)}</h2>
+                <h2 className="text-lg font-bold">Total: JPY {purchase?.total_amount.toFixed(2)}</h2>
             </div>
 
 

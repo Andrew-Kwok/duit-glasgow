@@ -14,7 +14,7 @@ export function TranslateBalanceTableToPayFlows(persons: Person[]): String[] {
         creditor.balance -= amount
 
         if (amount >= 0.01) {
-            payFlows.push(`${debtor.name} needs to pay ${creditor.name} $${amount.toFixed(2)}.`)
+            payFlows.push(`${debtor.name} needs to pay ${creditor.name} JPY${amount.toFixed(2)}.`)
         }
 
         if (debtor.balance == 0) {
