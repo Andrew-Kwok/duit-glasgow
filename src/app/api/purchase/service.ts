@@ -3,6 +3,7 @@ import {DEFAULT_PURCHASE_PAGE_SIZE} from "@component/app/api/constants";
 import PersonService from "@component/app/api/person/service";
 import PurchaseSql from "@component/app/api/purchase/sql";
 import {calculateTotalAmount, calculateTotalPrices} from "@component/lib/purchase";
+import {addDelta, Currency, flattenDelta} from "@component/app/api/lib/util";
 
 
 export default {
@@ -63,40 +64,28 @@ async function fetchCompletePurchaseById(purchaseId: string): Promise<Purchase> 
 }
 
 async function upsertPurchaseWithDetails(purchase: PurchaseUpsert): Promise<void> {
-    const persons = await PersonService.getPersons();
-    let oldPurchase: Purchase | null = null;
-
+    const deltas = new Map<string, Map<string, number>>();
     if (purchase.id) {
-        oldPurchase = await fetchCompletePurchaseById(purchase.id);
-    }
+        // remove contribution from old purchase
+        const oldPurchase = await fetchCompletePurchaseById(purchase.id);
 
-    // calculate new balances
-    let newPersonBalance = persons.reduce((map, person) => {
-        map.set(person.id, person.balance);
-        return map;
-    }, new Map<string, number>());
+        for (const d of oldPurchase.purchase_details) {
+            addDelta(deltas, oldPurchase.paid_by, oldPurchase.currency, -d.total_price);
 
-    // remove contribution from old purchase
-    if (oldPurchase) {
-        for (const purchaseDetail of oldPurchase.purchase_details) {
-            const paidByBalance = newPersonBalance.get(oldPurchase.paid_by) ?? 0;
-            newPersonBalance.set(oldPurchase.paid_by, paidByBalance - purchaseDetail.total_price);
-
-            for (const share of purchaseDetail.shares || []) {
-                const shareAmount = purchaseDetail.total_price * share.share_rate;
-                const personBalance = newPersonBalance.get(share.person_id) ?? 0;
-                newPersonBalance.set(share.person_id, personBalance + shareAmount);
+            for (const share of d.shares || []) {
+                const shareAmount = d.total_price * share.share_rate;
+                addDelta(deltas, share.person_id, oldPurchase.currency, shareAmount);
             }
         }
     }
 
+    // add contribution from new purchase
     for (const purchaseDetail of purchase.purchase_details) {
-        const paidByBalance = newPersonBalance.get(purchase.paid_by) ?? 0;
-        newPersonBalance.set(purchase.paid_by, paidByBalance + purchaseDetail.total_price);
+        addDelta(deltas, purchase.paid_by, purchase.currency, purchaseDetail.total_price)
+
         for (const share of purchaseDetail.shares || []) {
             const shareAmount = purchaseDetail.total_price * share.share_rate;
-            const personBalance = newPersonBalance.get(share.person_id) ?? 0;
-            newPersonBalance.set(share.person_id, personBalance - shareAmount);
+            addDelta(deltas, share.person_id, purchase.currency, -shareAmount);
         }
     }
 
@@ -104,28 +93,25 @@ async function upsertPurchaseWithDetails(purchase: PurchaseUpsert): Promise<void
     await PurchaseSql.upsertPurchase(purchase);
 
     // update balances in database
-    await PersonService.updateBalancesWithMap(newPersonBalance);
+    await PersonService.addBalancesByDelta(flattenDelta(deltas));
 }
 
 async function deletePurchaseById(purchaseId: string): Promise<void> {
-    const persons = await PersonService.getPersons();
+    const deltas = new Map<string, Map<string, number>>();
 
     const purchase = await fetchCompletePurchaseById(purchaseId);
-    let newPersonBalance = persons.reduce((map, person) => {
-        map.set(person.id, person.balance);
-        return map;
-    }, new Map<string, number>());
+    if (purchase) {
+        for (const d of purchase.purchase_details) {
+            addDelta(deltas, purchase.paid_by, purchase.currency, -d.total_price);
 
-    for (const purchaseDetail of purchase.purchase_details) {
-        const paidByBalance = newPersonBalance.get(purchase.paid_by) ?? 0;
-        newPersonBalance.set(purchase.paid_by, paidByBalance - purchaseDetail.total_price);
-        for (const share of purchaseDetail.shares) {
-            const shareAmount = purchaseDetail.total_price * share.share_rate;
-            const personBalance = newPersonBalance.get(share.person_id) ?? 0;
-            newPersonBalance.set(share.person_id, personBalance + shareAmount);
+            for (const share of d.shares || []) {
+                const shareAmount = d.total_price * share.share_rate;
+                addDelta(deltas, share.person_id, purchase.currency, shareAmount);
+            }
         }
+
     }
 
     await PurchaseSql.deletePurchaseById(purchaseId);
-    await PersonService.updateBalancesWithMap(newPersonBalance);
+    await PersonService.addBalancesByDelta(flattenDelta(deltas));
 }

@@ -3,6 +3,7 @@ export interface Payment {
     from_person_id: string;  // UUID
     to_person_id: string;  // UUID
     amount: number;
+    currency: string;
     date: Date;
     notes: string;
     created_at: Date;
@@ -14,6 +15,7 @@ export interface PaymentUpsert {
     from_person_id: string | null;  // UUID
     to_person_id: string | null;  // UUID
     amount: number;
+    currency: string;
     date: Date | null;
     notes: string;
 }

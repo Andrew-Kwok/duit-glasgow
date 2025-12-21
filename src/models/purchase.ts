@@ -3,6 +3,7 @@ export interface Purchase {
     name: string;
     date: Date;
     total_amount: number;
+    currency: string;
     paid_by: string;
     store: string;
     purchase_details: PurchaseDetail[];
@@ -35,6 +36,7 @@ export interface PurchaseUpsert {
     name: string;
     date: Date | null;
     total_amount: number;
+    currency: string;
     paid_by: string;
     store: string;
     purchase_details: PurchaseDetailUpsert[];

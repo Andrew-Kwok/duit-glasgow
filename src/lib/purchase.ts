@@ -130,6 +130,7 @@ export function constructNewPurchaseCreate(persons: Person[]): PurchaseUpsert {
         name: '',
         date: null,
         total_amount: 0,
+        currency: 'CAD',
         paid_by: '',
         store: '',
         purchase_details: [constructNewPurchaseDetailCreate(persons)]
@@ -155,6 +156,7 @@ export function constructDuplicatePurchaseCreateFromPurchase(purchase: Purchase,
         name: purchase.name,
         date: null,
         total_amount: purchase.total_amount,
+        currency: purchase.currency,
         paid_by: purchase.paid_by,
         store: purchase.store,
         purchase_details: purchase.purchase_details.map(detail => ({
@@ -178,6 +180,7 @@ export function constructPurchaseCreateFromPurchase(purchase: Purchase, persons:
         name: purchase.name,
         date: purchase.date ? new Date(purchase.date as unknown as string) : null,
         total_amount: purchase.total_amount,
+        currency: purchase.currency,
         paid_by: purchase.paid_by,
         store: purchase.store,
         purchase_details: purchase.purchase_details.map(detail => ({
