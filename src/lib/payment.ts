@@ -6,6 +6,7 @@ export function constructNewPaymentCreate(): PaymentUpsert {
         from_person_id: null,
         to_person_id: null,
         amount: 0,
+        currency: 'CAD',
         date: null,
         notes: ''
     };
@@ -17,6 +18,7 @@ export function constructPaymentCreateFromPayment(payment: PaymentUpsert): Payme
         from_person_id: payment.from_person_id,
         to_person_id: payment.to_person_id,
         amount: payment.amount,
+        currency: payment.currency,
         date: payment.date ? new Date(payment.date as unknown as string) : null,
         notes: payment.notes
     };

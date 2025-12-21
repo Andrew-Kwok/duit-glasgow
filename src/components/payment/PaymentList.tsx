@@ -195,7 +195,7 @@ export default function PaymentList() {
                             <td>{(currentPage - 1) * DEFAULT_PAYMENT_PAGE_SIZE + index + 1}</td>
                             <td>{personMap.get(payment.from_person_id)?.name}</td>
                             <td>{personMap.get(payment.to_person_id)?.name}</td>
-                            <td>{payment.amount.toFixed(2)}</td>
+                            <td>{payment.currency} {payment.amount.toFixed(2)}</td>
                             <td>{payment.date.toString()}</td>
                             <td>{payment.notes}</td>
                         </tr>

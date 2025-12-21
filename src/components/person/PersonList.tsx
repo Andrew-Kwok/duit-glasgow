@@ -1,13 +1,15 @@
 "use client";
 
 // src/components/PersonList.tsx
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {PersonContext} from "@component/context/PersonContext";
 import {TranslateBalanceTableToPayFlows} from "@component/lib/common";
 import {useSession} from "next-auth/react";
+import {CURRENCIES} from "@component/app/api/constants";
 
 export default function PersonList() {
     const { persons } = useContext(PersonContext);
+    const [selectedCurrency, setSelectedCurrency] = useState('CAD');
     const payFlows = TranslateBalanceTableToPayFlows(persons);
 
     return (
@@ -19,7 +21,18 @@ export default function PersonList() {
                             <tr>
                                 <th></th>
                                 <th>Name</th>
-                                <th>Balance</th>
+                                <th>
+                                    Balance
+                                    <select
+                                      className="select select-bordered select-xs mx-2"
+                                      value={selectedCurrency}
+                                      onChange={(e) => setSelectedCurrency(e.target.value)}
+                                    >
+                                        {CURRENCIES.map(c => (
+                                          <option key={c} value={c}>{c}</option>
+                                        ))}
+                                    </select>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -27,7 +40,16 @@ export default function PersonList() {
                                 <tr key={person.id}>
                                     <td>{index + 1}</td>
                                     <td>{person.name}</td>
-                                    <td>{person.balance.toFixed(2)}</td>
+                                    <td>
+                                        {(() => {
+                                            const b = person.balances.find(
+                                              (bal) => bal.currency === selectedCurrency
+                                            );
+                                            return b
+                                              ? `${selectedCurrency} ${b.balance.toFixed(2)}`
+                                              : `${selectedCurrency} 0.00`;
+                                        })()}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

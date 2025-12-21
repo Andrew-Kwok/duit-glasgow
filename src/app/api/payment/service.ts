@@ -2,6 +2,7 @@ import {Payment, PaymentUpsert} from "@component/models/payment";
 import PaymentSql from "@component/app/api/payment/sql";
 import PersonService from "@component/app/api/person/service";
 import {DEFAULT_PAYMENT_PAGE_SIZE} from "@component/app/api/constants";
+import {addDelta, flattenDelta} from "@component/app/api/lib/util";
 
 export default {
     fetchPayments,
@@ -14,41 +15,35 @@ async function fetchPayments(page: number = 1, pageSize: number = DEFAULT_PAYMEN
 }
 
 async function upsertPayment(payment: PaymentUpsert): Promise<void> {
-    const persons = await PersonService.getPersons();
-    let oldPayment: Payment | null = null;
-    if (payment.id) {
-        oldPayment = await PaymentSql.getPaymentById(payment.id);
+    if (!payment.from_person_id) {
+        throw new Error('Sender is required');
+    }
+    if (!payment.to_person_id) {
+        throw new Error('Receiver is required');
     }
 
-    for (const person of persons) {
-        if (person.id == payment.from_person_id) {
-            if (oldPayment) {
-                person.balance -= oldPayment.amount;
-            }
-            person.balance += payment.amount;
-        } else if (person.id == payment.to_person_id) {
-            if (oldPayment) {
-                person.balance += oldPayment.amount;
-            }
-            person.balance -= payment.amount;
-        }
+    const deltas = new Map<string, Map<string, number>>();
+    if (payment.id) {
+        const oldPayment = await PaymentSql.getPaymentById(payment.id);
+
+        addDelta(deltas, oldPayment.from_person_id, oldPayment.currency, -oldPayment.amount);
+        addDelta(deltas, oldPayment.to_person_id, oldPayment.currency, oldPayment.amount);
     }
+
+    addDelta(deltas, payment.from_person_id, payment.currency, payment.amount);
+    addDelta(deltas, payment.to_person_id, payment.currency, -payment.amount);
 
     await PaymentSql.upsertPayment(payment);
-    await PersonService.updateBalances(persons);
+    await PersonService.addBalancesByDelta(flattenDelta(deltas));
 }
 
 async function deletePaymentById(paymentId: string): Promise<void> {
-    const payment = await PaymentSql.getPaymentById(paymentId);
-    const persons = await PersonService.getPersons();
-    for (const person of persons) {
-        if (person.id == payment.from_person_id) {
-            person.balance -= payment.amount;
-        } else if (person.id == payment.to_person_id) {
-            person.balance += payment.amount;
-        }
-    }
+    const deltas = new Map<string, Map<string, number>>();
+
+    const oldPayment = await PaymentSql.getPaymentById(paymentId);
+    addDelta(deltas, oldPayment.from_person_id, oldPayment.currency, -oldPayment.amount);
+    addDelta(deltas, oldPayment.to_person_id, oldPayment.currency, oldPayment.amount);
 
     await PaymentSql.deletePaymentById(paymentId);
-    await PersonService.updateBalances(persons);
+    await PersonService.addBalancesByDelta(flattenDelta(deltas));
 }

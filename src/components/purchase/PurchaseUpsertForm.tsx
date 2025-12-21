@@ -22,6 +22,16 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
 
     const [purchase, setPurchase] = useState<PurchaseUpsert>(upsertFormProps.initialPurchaseCreate);
 
+    const currencies = [
+        { code: "CAD", label: "Canada (CAD)" },
+        { code: "USD", label: "United States (USD)" },
+        { code: "IDR", label: "Indonesia (IDR)" },
+        { code: "BRL", label: "Brazil (BRL)" },
+        { code: "CLP", label: "Chile (CLP)" },
+        { code: "MXN", label: "Mexico (MXN)" },
+        { code: "PEN", label: "Peru (PEN)" },
+    ];
+
     const handleStringInputChange = (
         e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>
     ) => {
@@ -148,6 +158,19 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
 
     return (
         <form className="flex flex-col min-h-screen">
+            <label className="form-control w-full max-w-xs">
+                <div className="label">
+                    <span className="label-text">Currency</span>
+                </div>
+                <select name="currency" className="select select-bordered w-full max-w-xs" onChange={handleStringInputChange} defaultValue="CAD">
+                    {currencies.map(({ code, label }) => (
+                      <option key={code} value={code}>
+                          {label}
+                      </option>
+                    ))}
+                </select>
+            </label>
+
             <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 my-4">
                 <label className="form-control w-full max-w-xs">
                     <div className="label">

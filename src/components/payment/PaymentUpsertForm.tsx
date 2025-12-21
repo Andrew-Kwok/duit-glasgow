@@ -14,6 +14,18 @@ export default function PaymentUpsertForm(paymentUpsertFormProps: PaymentUpsertF
     const router = useRouter();
     const { persons, refreshPersons } = useContext(PersonContext);
     const [payment, setPayment] = useState<PaymentUpsert>(paymentUpsertFormProps.initialPaymentUpsert);
+
+
+    const currencies = [
+        { code: "CAD", label: "Canada (CAD)" },
+        { code: "USD", label: "United States (USD)" },
+        { code: "IDR", label: "Indonesia (IDR)" },
+        { code: "BRL", label: "Brazil (BRL)" },
+        { code: "CLP", label: "Chile (CLP)" },
+        { code: "MXN", label: "Mexico (MXN)" },
+        { code: "PEN", label: "Peru (PEN)" },
+    ];
+
     const handleStringInputChange = (
         e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>
     ) => {
@@ -114,6 +126,18 @@ export default function PaymentUpsertForm(paymentUpsertFormProps: PaymentUpsertF
                         <option key={person.id} value={person.id}>{person.name}</option>
                     ))}
                 </select>
+
+                <div className="label">
+                    <span className="label-text">Currency</span>
+                </div>
+                <select name="currency" className="select select-bordered" onChange={handleStringInputChange} defaultValue="CAD">
+                    {currencies.map(({ code, label }) => (
+                      <option key={code} value={code}>
+                          {label}
+                      </option>
+                    ))}
+                </select>
+
 
                 <div className="label">
                     <span className="label-text">Amount</span>

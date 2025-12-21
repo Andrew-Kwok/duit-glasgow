@@ -101,6 +101,7 @@ async function upsertPurchase(purchase: PurchaseUpsert): Promise<String> {
         p_name: purchase.name,
         p_date: purchase.date,
         p_total_amount: purchase.total_amount,
+        p_currency: purchase.currency,
         p_paid_by: purchase.paid_by,
         p_store: purchase.store,
         p_details: purchase.purchase_details,
