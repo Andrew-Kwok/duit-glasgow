@@ -316,7 +316,7 @@ export default function PurchaseUpsertForm(upsertFormProps: UpsertFormProps) {
 
             <div className="fixed bottom-0 left-0 w-full bg-base-300 min-h-fit p-4 flex justify-center">
                 <button type="button" className="btn btn-primary mx-2" onClick={handleAddPurchaseDetail}>Add Item</button>
-                <h1 className="btn btn-ghost mx-2">Total: CAD {purchase.total_amount.toFixed(2)}</h1>
+                <h1 className="btn btn-ghost mx-2">Total: {purchase.currency} {purchase.total_amount.toFixed(2)}</h1>
 
                 <button type="submit" className="btn btn-primary mx-2" onClick={handleSubmit}>Submit</button>
             </div>
