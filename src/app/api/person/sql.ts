@@ -18,6 +18,7 @@ async function getPersons(): Promise<Person[]> {
         created_at,
         updated_at,
         balances:id_balance_map (
+          person_id,
           currency,
           balance
         )
